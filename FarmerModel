@@ -1,0 +1,93 @@
+from Constants import connString
+import pyodbc
+import datetime
+import uuid
+import time
+import Constants    
+
+class FarmerModel:
+    def __init__(self, farmerID = '',farmerName = '',contactNbr = '',emailID = '',address = '',city = '',county = '',postcode = '',country = '',adharNumber = '',emailModel = None):
+        self.farmerID = farmerID
+        self.farmerName = farmerName
+        self.contactNbr = contactNbr
+        self.emailID = emailID
+        self.address = address
+        self.city = city
+        self.county = county
+        self.postcode = postcode
+        self.country = country
+        self.adharNumber = adharNumber
+        self.emailModel = emailModel
+       
+        
+
+    @staticmethod
+    def get_all():
+        conn = pyodbc.connect(connString, autocommit=True)
+        cursor = conn.cursor()
+        sqlcmd1 = "SELECT * FROM Farmer ORDER BY farmerName"
+        cursor.execute(sqlcmd1)
+        records = []
+        for dbrow in cursor.fetchall():
+            row = FarmerModel(dbrow[0],dbrow[1],dbrow[2],dbrow[3],dbrow[4],dbrow[5],dbrow[6],dbrow[7],dbrow[8],dbrow[9])
+            records.append(row)
+        cursor.close()
+        conn.close()
+        return records
+
+    @staticmethod
+    def get_name_id():
+        conn = pyodbc.connect(connString, autocommit=True)
+        cursor = conn.cursor()
+        sqlcmd1 = "SELECT farmerID, farmerName FROM Farmer  ORDER BY farmerName"
+        cursor.execute(sqlcmd1)
+        records = []
+        for dbrow in cursor.fetchall():
+            row = FarmerModel(dbrow[0],dbrow[1])
+            records.append(row)
+        cursor.close()
+        conn.close()
+        return records
+        
+    @staticmethod
+    def get_by_id(unique_id):
+        conn = pyodbc.connect(connString, autocommit=True)
+        cursor = conn.cursor()
+        sqlcmd1 = "SELECT * FROM Farmer WHERE farmerID = ?"
+        cursor.execute(sqlcmd1, unique_id)
+        record = None
+        for dbrow in cursor.fetchall():
+            record = FarmerModel(dbrow[0],dbrow[1],dbrow[2],dbrow[3],dbrow[4],dbrow[5],dbrow[6],dbrow[7],dbrow[8],dbrow[9])
+        cursor.close()
+        conn.close()
+        return record
+    
+    @staticmethod
+    def insert(obj):
+        obj.farmerID = str(uuid.uuid4())
+        conn = pyodbc.connect(connString, autocommit=True)
+        cursor = conn.cursor()
+        sqlcmd1 = "INSERT INTO Farmer (farmerID,farmerName,contactNbr,emailID,address,city,county,postcode,country,adharNumber) VALUES(?,?,?,?,?,?,?,?,?,?)"
+        cursor.execute(sqlcmd1, (obj.farmerID,obj.farmerName,obj.contactNbr,obj.emailID,obj.address,obj.city,obj.county,obj.postcode,obj.country,obj.adharNumber))
+        cursor.close()
+        conn.close()
+        
+    
+    @staticmethod
+    def update(obj):
+        conn = pyodbc.connect(connString, autocommit=True)
+        cursor = conn.cursor()
+        sqlcmd1 = "UPDATE Farmer SET farmerName = ?,contactNbr = ?,emailID = ?,address = ?,city = ?,county = ?,postcode = ?,country = ?,adharNumber = ? WHERE farmerID = ?"
+        cursor.execute(sqlcmd1,  (obj.farmerName,obj.contactNbr,obj.emailID,obj.address,obj.city,obj.county,obj.postcode,obj.country,obj.adharNumber,obj.farmerID))
+        cursor.close()
+        conn.close()
+    
+    @staticmethod
+    def delete(unique_id):
+        conn = pyodbc.connect(connString, autocommit=True)
+        cursor = conn.cursor()
+        sqlcmd1 = "DELETE FROM Farmer WHERE farmerID = ?"
+        cursor.execute(sqlcmd1, (unique_id))
+        cursor.close()
+        conn.close()
+
