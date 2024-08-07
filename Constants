@@ -1,0 +1,5 @@
+serverName = "LAPTOP-7DUU5MNK\SQLEXPRESS"
+databaseName = "AgricultureFoodSupplyChainV1"
+connString = "Driver={SQL Server};Server="+serverName+";Integrated_Security=true;Database="+databaseName
+contract_address = "0xc1F9975bD459D71A3d4015897d2aaE8bFA5bBA09"
+    
